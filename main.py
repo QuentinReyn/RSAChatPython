@@ -107,28 +107,28 @@ def main(args):
     public =""
     private = ""
     if(commande == 'keygen'):
-        if(sswitch is not None):
-            public, private = generate_key_pair_auto(sswitch)
+        if(mswitch is not None): # le cas où l'utilisateur voudrait generer de facon non aleatoire ses clés
+            p = int(input(" - Enter a prime number (17, 19, 23, etc): "))
+            q = int(input(" - Enter another prime number (Not one you entered above): "))
+            public, private = generate_key_pair_manually(p, q)
+            if(fswitch is not None):
+                makeFile.create_file_rsa(fswitch, private[1], public[1])
+            else:
+                makeFile.create_file_rsa("mescles", private[1], public[1])
         else:
-            public, private = generate_key_pair_auto(10)
-        if(fswitch is not None):
-            makeFile.create_file_rsa(fswitch, private[1], public[1])
-        else:
-            makeFile.create_file_rsa("mescles", private[1], public[1])
+            if(sswitch is not None):
+                public, private = generate_key_pair_auto(sswitch)
+            else:
+                public, private = generate_key_pair_auto(10)
+            if(fswitch is not None):
+                makeFile.create_file_rsa(fswitch, private[1], public[1])
+            else:
+                makeFile.create_file_rsa("mescles", private[1], public[1])
+        print(" - Generating your public / private key-pairs now . . .")
 
-    if(mswitch is not None):
-        p = int(input(" - Enter a prime number (17, 19, 23, etc): "))
-        q = int(input(" - Enter another prime number (Not one you entered above): "))
-        public, private = generate_key_pair_manually(p, q)
-        if(fswitch is not None):
-            makeFile.create_file_rsa(fswitch, private[0], public[0])
-        else:
-            makeFile.create_file_rsa("mescles", private[0], public[0])
-
-    print(" - Generating your public / private key-pairs now . . .")
-
-    print(" - Your public key is ", public,
+        print(" - Your public key is ", public,
           " and your private key is ", private)
+    
 
     if(commande == "crypt"):
         if(cle is not None or cle != ""):
@@ -202,7 +202,9 @@ def main(args):
 
 def helpMsg(name=None):
     return '''program.py
-        Syntaxe: monRSA <commande> [<clé>] [<texte>] [switchs]
+        Script RSAPythonChat par Quentin Reynaud
+        Syntaxe: 
+        monRSA <commande> [<clé>] [<texte>] [switchs]
         Commandes : 
         keygen: Génére une paire de clé 
         crytp: Chiffre <texte> pour le clé publique <clé> 
@@ -217,7 +219,8 @@ def helpMsg(name=None):
                   -s <size> précise à keygen la taille de la clé à générer (défaut 10)
                   -i <file> crypt & decrypt acceptent un fichier texte à la place d'une chaîne
                   -o <file> crypt & decrypt acceptent un switch -o qui donne le nom d'un ficher de sortie
-                  -m utilisation manuel du programme (definition manuel des nombres premiers...)
+                  -m précise à keygen que l'utilisateur veux renseigner manuellement ses nombres premiers
+        Pour l'argument de type <file> veuillez ne pas renseigner d'extension, le programme n'accepte que des .txt par défaut
         '''
 
 

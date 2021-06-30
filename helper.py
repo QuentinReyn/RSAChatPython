@@ -8,7 +8,7 @@ def write_in_output_file(filename,text):
     for i in range(1):
         f.write(text)
     f.close()
-    print("file saved with your decrypted message")
+    print("file saved successfully with your crypted/decrypted message : "+text)
 
 def read_text_file(fileName):
    text = ""
