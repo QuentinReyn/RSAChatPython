@@ -1,4 +1,31 @@
 import random,base64
+import re
+from primesieve import *
+
+
+def read_private_rsa_file(fileName):
+   rsa = ""
+   with open(fileName+'.priv') as f:
+    lines = f.readlines()    
+    if(str(lines[0]).lower().strip() == '---begin monrsa private key---'):
+        rsa = str(lines[1])
+    f.close()
+   return rsa
+
+def read_public_rsa_file(fileName):
+   rsa = ""
+   
+   with open(fileName+'.pub') as f:
+    lines = f.readlines()
+    if(str(lines[0]).lower().strip() == '---begin monrsa public key---'):
+        rsa = str(lines[1])
+    f.close()
+   return rsa
+
+def generate_random_prime(size:int):
+    return n_primes(1, random.randint(10**size, 10**(size+1)-1))[0]
+
+
 
 '''
 Algorithme d'Euclide pour déterminer le plus grand diviseur commun
@@ -60,3 +87,16 @@ Convertir un texte en base64
 def convert_to_base64(decimal):
     y=str(decimal).encode('ascii')
     return base64.b64encode(y).decode('ascii')
+
+def decode_base64(data, altchars=b'+/'):
+    """Decode base64, padding being optional.
+
+    :param data: Base64 data as an ASCII byte string
+    :returns: The decoded byte string.
+
+    """
+    data = re.sub(rb'[^a-zA-Z0-9%s]+' % altchars, b'', data)  # normalize
+    missing_padding = len(data) % 4
+    if missing_padding:
+        data += b'='* (4 - missing_padding)
+    return base64.b64decode(data, altchars)
