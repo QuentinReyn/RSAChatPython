@@ -98,36 +98,37 @@ def main(args):
     commande = args.commande
     cle = args.cle
     texte = args.texte
-    switchs = args.switchs
-    print(switchs)
-    newCle = ""
-    newText = ""
+    fswitch= args.f
+    sswitch = args.s
+    iswitch = args.i
+    oswitch = args.o
+    mswitch = args.m
     encrypted_msg = ""
     public =""
     private = ""
     if(commande == 'keygen'):
-        if(switchs is not None and "-s" in switchs):
-            public, private = generate_key_pair_auto(10)
+        if(mswitch is not None): # le cas où l'utilisateur voudrait generer de facon non aleatoire ses clés
+            p = int(input(" - Enter a prime number (17, 19, 23, etc): "))
+            q = int(input(" - Enter another prime number (Not one you entered above): "))
+            public, private = generate_key_pair_manually(p, q)
+            if(fswitch is not None):
+                makeFile.create_file_rsa(fswitch, private[1], public[1])
+            else:
+                makeFile.create_file_rsa("mescles", private[1], public[1])
         else:
-            public, private = generate_key_pair_auto(10)
-        if(switchs is not None and "-f" in switchs):
-            makeFile.create_file_rsa("mescles", private[1], public[1])
-        else:
-            makeFile.create_file_rsa("mescles", private[1], public[1])
+            if(sswitch is not None):
+                public, private = generate_key_pair_auto(sswitch)
+            else:
+                public, private = generate_key_pair_auto(10)
+            if(fswitch is not None):
+                makeFile.create_file_rsa(fswitch, private[1], public[1])
+            else:
+                makeFile.create_file_rsa("mescles", private[1], public[1])
+        print(" - Generating your public / private key-pairs now . . .")
 
-    if(switchs is not None and "-m" in switchs):
-        p = int(input(" - Enter a prime number (17, 19, 23, etc): "))
-        q = int(input(" - Enter another prime number (Not one you entered above): "))
-        public, private = generate_key_pair_manually(p, q)
-        if(switchs is not None and "-f" in switchs):
-            makeFile.create_file_rsa("mescles", private[0], public[0])
-        else:
-            makeFile.create_file_rsa("mescles", private[0], public[0])
-
-    print(" - Generating your public / private key-pairs now . . .")
-
-    print(" - Your public key is ", public,
+        print(" - Your public key is ", public,
           " and your private key is ", private)
+    
 
     if(commande == "crypt"):
         if(cle is not None or cle != ""):
@@ -135,22 +136,32 @@ def main(args):
                 print(helper.read_public_rsa_file(cle))
                 cle = redirect_new_key_input()
             else:
+                if(iswitch is not None):
+                    texte = helper.read_text_file(iswitch)
                 while(texte is None):
                     texte = redirect_new_text_input()
                 else:
                     encrypted_msg = encrypt(helper.read_public_rsa_file(cle), texte)
-                    print(" - Your encrypted message is: ",
+                    if(oswitch is not None):
+                        helper.write_in_output_file(oswitch,encrypted_msg)
+                    else:
+                        print(" - Your encrypted message is: ",
                           ''.join(map(lambda x: str(x), encrypted_msg)))
         else:
             cle = redirect_new_key_input()
             while(helper.read_public_rsa_file(cle) == ""):
                 cle = redirect_new_key_input()
             else:
+                if(iswitch is not None):
+                    texte = helper.read_text_file(iswitch)
                 while(texte is None):
                     texte = redirect_new_text_input()
                 else:
                     encrypted_msg = encrypt(helper.read_public_rsa_file(cle), texte)
-                    print(" - Your encrypted message is: ",
+                    if(oswitch is not None):
+                        helper.write_in_output_file(oswitch,encrypted_msg)
+                    else:
+                     print(" - Your encrypted message is: ",
                           ''.join(map(lambda x: str(x), encrypted_msg)))
 
     if(commande == "decrypt"):
@@ -158,21 +169,31 @@ def main(args):
             while(helper.read_private_rsa_file(cle) == ""):
                 cle = redirect_new_key_input()
             else:
+                if(iswitch is not None):
+                    texte = helper.read_text_file(iswitch)
                 while(texte is None):
                     texte = redirect_new_text_input()
                 else:
-                    print(" - Decrypting message with private key ", cle, " . . .")
-                    print(" - Your message is: ", decrypt(helper.read_private_rsa_file(cle), texte))
+                    if(oswitch is not None):
+                        helper.write_in_output_file(oswitch,decrypt(helper.read_private_rsa_file(cle), texte))
+                    else:
+                        print(" - Decrypting message with private key ", cle, " . . .")
+                        print(" - Your message is: ", decrypt(helper.read_private_rsa_file(cle), texte))
         else:
             cle = redirect_new_key_input()
             while(helper.read_private_rsa_file(cle) == ""):
                 cle = redirect_new_key_input()
             else:
+                if(iswitch is not None):
+                    texte = helper.read_text_file(iswitch)
                 while(texte is None):
                     texte = redirect_new_text_input()
                 else:
-                    print(" - Decrypting message with private key ", cle, " . . .")
-                    print(" - Your message is: ", decrypt(helper.read_private_rsa_file(cle), texte))
+                    if(oswitch is not None):
+                        helper.write_in_output_file(oswitch,decrypt(helper.read_private_rsa_file(cle), texte))
+                    else:
+                        print(" - Decrypting message with private key ", cle, " . . .")
+                        print(" - Your message is: ", decrypt(helper.read_private_rsa_file(cle), texte))
 
     print(" ")
     print("============================================ END ==========================================================")
@@ -181,7 +202,9 @@ def main(args):
 
 def helpMsg(name=None):
     return '''program.py
-        Syntaxe: monRSA <commande> [<clé>] [<texte>] [switchs]
+        Script RSAPythonChat par Quentin Reynaud
+        Syntaxe: 
+        monRSA <commande> [<clé>] [<texte>] [switchs]
         Commandes : 
         keygen: Génére une paire de clé 
         crytp: Chiffre <texte> pour le clé publique <clé> 
@@ -192,7 +215,12 @@ def helpMsg(name=None):
         Texte: 
                   Une phrase en clair ('crypt') ou une phrase chiffrée ('decrypt') 
         Switchs : 
-                  -f <file> permet de choisir le nom des clé générés, monRSA.pub et monRSA.priv par défaut")
+                  -f <file> permet de choisir le nom des clé générés, monRSA.pub et monRSA.priv par défaut
+                  -s <size> précise à keygen la taille de la clé à générer (défaut 10)
+                  -i <file> crypt & decrypt acceptent un fichier texte à la place d'une chaîne
+                  -o <file> crypt & decrypt acceptent un switch -o qui donne le nom d'un ficher de sortie
+                  -m précise à keygen que l'utilisateur veux renseigner manuellement ses nombres premiers
+        Pour l'argument de type <file> veuillez ne pas renseigner d'extension, le programme n'accepte que des .txt par défaut
         '''
 
 
@@ -212,7 +240,11 @@ def menu():
     required.add_argument("--commande", required=True)
     args.add_argument("--cle")
     args.add_argument("--texte")
-    args.add_argument("--switchs", nargs=2, action='append')
+    args.add_argument("-f","--f")
+    args.add_argument("-s","--s")
+    args.add_argument("-i","--i")
+    args.add_argument("-o","--o")
+    args.add_argument("-m","--m")
     return args.parse_args()
 
 
