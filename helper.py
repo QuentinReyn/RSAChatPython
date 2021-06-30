@@ -3,6 +3,21 @@ import re
 from primesieve import *
 
 
+def write_in_output_file(filename,text):
+    f= open(filename+".txt","w+")
+    for i in range(1):
+        f.write(text)
+    f.close()
+    print("file saved with your decrypted message")
+
+def read_text_file(fileName):
+   text = ""
+   with open(fileName+'.txt') as f:
+    lines = f.readlines()    
+    text = str(lines[0])
+    f.close()
+   return text
+
 def read_private_rsa_file(fileName):
    rsa = ""
    with open(fileName+'.priv') as f:
@@ -23,7 +38,7 @@ def read_public_rsa_file(fileName):
    return rsa
 
 def generate_random_prime(size:int):
-    return n_primes(1, random.randint(10**size, 10**(size+1)-1))[0]
+    return n_primes(1, random.randint(10**int(size), 10**(int(size)+1)-1))[0]
 
 
 
