@@ -61,7 +61,7 @@ def generate_key_pair_auto(size):
     # La clé publique est (e, n) et la clé privée est (d, n)
     return ((e, n), (d, n))
 
-#gitcommitfix
+
 def encrypt(key, string):
     enc = []
     for i in range(len(string)):
