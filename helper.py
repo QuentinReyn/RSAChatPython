@@ -20,21 +20,26 @@ def read_text_file(fileName):
 
 def read_private_rsa_file(fileName):
    rsa = ""
-   with open(fileName+'.priv') as f:
-    lines = f.readlines()    
-    if(str(lines[0]).lower().strip() == '---begin monrsa private key---'):
-        rsa = str(lines[1])
-    f.close()
+   try:
+    with open(fileName+'.priv') as f:
+        lines = f.readlines()    
+        if(str(lines[0]).lower().strip() == '---begin monrsa private key---'):
+            rsa = str(lines[1])
+        f.close()
+   except IOError:
+       print("Le fichier "+fileName+ ".priv n'existe pas")
    return rsa
 
 def read_public_rsa_file(fileName):
    rsa = ""
-   
-   with open(fileName+'.pub') as f:
-    lines = f.readlines()
-    if(str(lines[0]).lower().strip() == '---begin monrsa public key---'):
-        rsa = str(lines[1])
-    f.close()
+   try:
+    with open(fileName+'.pub') as f:
+        lines = f.readlines()
+        if(str(lines[0]).lower().strip() == '---begin monrsa public key---'):
+            rsa = str(lines[1])
+        f.close()
+   except IOError:
+        print("Le fichier "+fileName+ ".pub n'existe pas")
    return rsa
 
 def generate_random_prime(size:int):
